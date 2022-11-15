@@ -16,22 +16,26 @@ const Login = () => {
   const onSubmitForm = async (e) => {
     e.preventDefault();
     const {email, password} = state;
-    const loginCredential = await signInWithEmailAndPassword(auth, email, password);
-    const {refreshToken, registered} = loginCredential["_tokenResponse"];
-    if(registered) {
-      const objToken = { refreshToken,registered}
-      localStorage.setItem("auth", JSON.stringify(objToken))
-      toast({
-        position: "top-right",
-        title: "Success Login",
-        status: "success",
-        duration: 2000
-      });
-      setTimeout(() => {
-        navigate("/home");
-      }, 3000)
-    }else {
-      setError("Your email not registered");
+    try{
+      const loginCredential = await signInWithEmailAndPassword(auth, email, password);
+      const {refreshToken, registered} = loginCredential["_tokenResponse"];
+      if(registered) {
+        const objToken = { refreshToken,registered}
+        localStorage.setItem("auth", JSON.stringify(objToken))
+        toast({
+          position: "top-right",
+          title: "Success Login",
+          status: "success",
+          duration: 2000
+        });
+        setTimeout(() => {
+          navigate("/home");
+        }, 3000)
+      }else {
+        setError("Your email not registered");
+      }
+    }catch(error) {
+      throw new Error("Cannot Login with Email & Password");
     }
   }
 

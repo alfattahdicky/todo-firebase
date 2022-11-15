@@ -18,16 +18,20 @@ const SignUp = () => {
     console.log(state);
     
     if(validationPassword(state, setError)) {
-      await createUserWithEmailAndPassword(auth, email, password);
-      toast({
-        title: "Account Created",
-        description: "Success we created account for you.",
-        status: "success",
-        duration: 6000,
-        isClosable: true
-      });
+      try{
+        await createUserWithEmailAndPassword(auth, email, password);
+        toast({
+          title: "Account Created",
+          description: "Success we created account for you.",
+          status: "success",
+          duration: 6000,
+          isClosable: true
+        });
+      }catch(err) {
+        setError("Authenticated Error")
+      }
     }else {
-      console.log("something went wrong");
+      setError("Validation Wrong");
     }
     reset();
   }
