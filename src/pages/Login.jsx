@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormLogin from '../components/FormLogin';
 import WrapForm from '../components/WrapForm';
-import auth from '../data/firebase';
+import {auth} from '../data/firebase';
 import useForm from '../hooks/useForm';
 
 const Login = () => {
