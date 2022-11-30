@@ -29,7 +29,7 @@ const Login = () => {
           duration: 2000
         });
         setTimeout(() => {
-          navigate("/home");
+          navigate(`/${loginCredential.user.uid}`);
         }, 3000)
       }else {
         setError("Your email not registered");

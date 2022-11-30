@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import AuthProvider from './context/AuthProvider';
 import SignUp from "./pages/SignUp";
@@ -10,15 +10,16 @@ import {auth} from './data/firebase';
 import PrivateRoute from "./utils/PrivateRoute"
 
 function App() {
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState("");
   const {pathname} = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if(pathname === "/home") {
+    const splitPathname = pathname.slice(1).length;
+    if(splitPathname === 28) {
       onAuthStateChanged(auth, (user) => {
-        setCurrentUser({...user});
-        // console.log({...user})
-      })
+        setCurrentUser(user.email);
+      });
     }
   }, []);
 
@@ -27,7 +28,7 @@ function App() {
       <Route path='/' element={<SignUp />} />
       <Route path="/login" element={<Login />} />
       <Route element={<PrivateRoute />}>
-        <Route path="/home" 
+        <Route path="/:userId" 
         element={
           <AuthProvider value={currentUser}>
             <Home />
