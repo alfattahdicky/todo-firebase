@@ -1,4 +1,5 @@
-import { Center, Stack, Box } from "@chakra-ui/react"
+import { Center, Stack, Box } from "@chakra-ui/react";
+import {memo} from 'react';
 
 const WrapForm = ({children, bg}) => {
   return (
@@ -12,4 +13,4 @@ const WrapForm = ({children, bg}) => {
   )
 }
 
-export default WrapForm
+export default memo(WrapForm);

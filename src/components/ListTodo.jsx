@@ -1,5 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import {
+  memo,
   forwardRef,
   useCallback,
   useEffect,
@@ -20,12 +21,15 @@ const ListTodo = ({
 }) => {
   const [task, setTask] = useState([]);
 
-  useEffect(() => {
-    const mapData = Object.keys(data).map((key) => {
+  const mapData = useMemo(() => {
+    return Object.keys(data).map((key) => {
       return { todoId: key, ...data[key] };
-    });
-    setTask(mapData);
+    })
   }, [data]);
+
+  useEffect(() => {
+    setTask(mapData);
+  }, [mapData]);
 
   return (
     <Box>
@@ -41,7 +45,7 @@ const ListTodo = ({
               handleCompleteTodo={() => handleComplete(element)}
               handleDeleteTodo={() => handleDelete(element)}
               submitTodo={(value) => updateTodo(element, value)}
-              handleChangeTodo={(value) => changeTodo(element, value)}
+              handleChangeTodo={(value) => changeTodo(value)}
               editTodo={() => editTodo(element)}
               complete={complete}
             />

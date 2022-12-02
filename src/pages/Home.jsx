@@ -1,15 +1,17 @@
 import { Stack, useToast } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef, memo } from "react";
 import InputTodo from "../components/InputTodo";
 import WrapperTodo from "../components/WrapperTodo";
 import { useAuthValue } from "../context/AuthProvider";
 import useForm from "../hooks/useForm";
 import { uid } from "uid";
 import HeaderTodo from "../components/HeaderTodo";
-import { database } from "../data/firebase";
+import { BASEURL, database, updateDatabase, todoRef } from "../data/firebase";
 import { child, onValue, ref, remove, set, update } from "firebase/database";
 import ListTodo from "../components/ListTodo";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUpdate } from "../hooks/useUpdate";
+import { getAuth, signOut } from "firebase/auth";
 
 const Home = () => {
   const [datas, setDatas] = useState({});
@@ -20,22 +22,22 @@ const Home = () => {
     edit: false,
     complete: false,
   });
-  const [edit, setEdit] = useState("");
-  const { userId } = useParams();
-  // console.log(user);
-  const user = useAuthValue();
   const toast = useToast();
+  const { userId } = useParams();
+  const { edit, changeTodo, editTodo, updateTodo } = useUpdate(toast, userId);
+  const user = useAuthValue();
+  const navigate = useNavigate();
+
+  console.log(user);
 
   useEffect(() => {
     const todoRef = ref(database, `users/${userId}`);
     onValue(todoRef, (snapshot) => {
-      // console.log(snapshot.val()["todo"]);
       setDatas(snapshot.val()["todo"]);
     });
   }, []);
 
   useEffect(() => {
-    // console.log(scrollRef)
     scrollRef.current.style.height = "25rem";
     scrollRef.current.style.paddingInline = "2rem";
     scrollRef.current.style.overflowY = "scroll";
@@ -45,10 +47,8 @@ const Home = () => {
   }, []);
 
   const addTodo = () => {
-    // console.log(state);
-    set(ref(database, `users/${userId}/todo/${uid(8)}`), state)
+    set(todoRef(`${BASEURL(userId)}/${uid(8)}`), state)
       .then(() => {
-        // console.log("Success", state);
         toast({
           position: "top-right",
           title: "Task has been created",
@@ -63,20 +63,22 @@ const Home = () => {
 
   const completeTodo = (task) => {
     const { todoId, ...items } = task;
-    // console.log(items);
-    // setComplete(!complete);
-    const updateTodo = {
+
+    const completeTodo = {
       complete: !items.complete,
       id: items.id,
       edit: items.edit,
       todo: items.todo,
     };
-    // console.log(updateTodo);
-    update(ref(database, `users/${userId}/todo/${todoId}`), updateTodo).then(
-      () => {
-        console.log("berhasil dichecklist");
-      }
+
+    const updateCompleteTodo = updateDatabase(
+      `${BASEURL(userId)}/${todoId}`,
+      completeTodo
     );
+
+    updateCompleteTodo.then(() => {
+      console.log("Berhasil di checklist");
+    });
   };
 
   const deleteTodo = (task) => {
@@ -85,56 +87,37 @@ const Home = () => {
       toast({
         position: "top-right",
         title: "Task Deleted",
-        status: 'error',
+        status: "error",
         duration: 500,
       });
     });
   };
 
-  const updateTodo = (task, value) => {
-    const { todoId, ...items } = task;
-    const updateTodo = {
-      complete: items.complete,
-      id: items.id,
-      edit: !items.edit,
-      todo: value === "" ? items.todo : value,
-    };
-    console.log(updateTodo);
-    update(ref(database, `users/${userId}/todo/${todoId}`), updateTodo).then(
-      () => {
+  const handleLogOut = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
         toast({
           position: "top-right",
-          title: "Task Updated",
+          title: "You has been out",
           status: 'success',
           duration: 500,
         });
-      }
-    );
+        navigate('/');
+        JSON.stringify(localStorage.setItem("auth", {}));
+      })
+      .catch((error) => {
+        toast({
+          position: "top-right",
+          title: "Error Log Out",
+          status: "error",
+          duration: 500
+        })
+      });
   };
 
-  const changeTodo = (task, value) => {
-    setEdit(value);
-  }
-
-  const editTodo = (task) => {
-    const { todoId, ...items } = task;
-    const updateTodo = {
-      complete: items.complete,
-      id: items.id,
-      edit: !items.edit,
-      todo: items.todo,
-    };
-    // console.log(updateTodo);
-    update(ref(database, `users/${userId}/todo/${todoId}`), updateTodo).then(
-      () => {
-        console.log("sedang diedit");
-      }
-    );
-    setEdit(items.todo);
-  }
-
   return (
-    <WrapperTodo bg={"/meteor.svg"}>
+    <WrapperTodo bg={"/meteor.svg"} handleLogOut={handleLogOut}>
       <HeaderTodo email={user} />
       <Stack mt="1rem" ref={scrollRef}>
         <ListTodo
@@ -152,4 +135,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default memo(Home);

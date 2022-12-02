@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Flex, Box, Text } from "@chakra-ui/react";
+import { useEffect, useState, memo } from "react";
+import { Flex, Box, Text, Button } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import localization from "dayjs/plugin/localizedFormat";
 
-const HeaderTodo = ({email}) => {
+const HeaderTodo = ({ email }) => {
   dayjs.extend(localization);
   const [date, setDate] = useState(dayjs().format("ll"));
   const [time, setTime] = useState(dayjs().format("LT"));
@@ -46,4 +46,4 @@ const HeaderTodo = ({email}) => {
   );
 };
 
-export default HeaderTodo;
+export default memo(HeaderTodo);

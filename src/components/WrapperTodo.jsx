@@ -1,9 +1,19 @@
-import { Center, Stack, Box } from "@chakra-ui/react";
+import { Center, Stack, Box, Button } from "@chakra-ui/react";
+import { memo } from "react";
 
-const WrapperTodo = ({ children, bg }) => {
+const WrapperTodo = ({ children, bg, handleLogOut }) => {
   return (
     <Stack>
       <Center h="100vh" bgImage={bg} bgPosition="center" bgRepeat="no-repeat">
+        <Button
+          position="absolute"
+          top="2rem"
+          right="2rem"
+          onClick={handleLogOut}
+          colorScheme="blue"
+        >
+          Log Out
+        </Button>
         <Box
           shadow="lg"
           bg="white"
@@ -22,4 +32,4 @@ const WrapperTodo = ({ children, bg }) => {
   );
 };
 
-export default WrapperTodo;
+export default memo(WrapperTodo);

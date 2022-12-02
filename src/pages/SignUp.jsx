@@ -33,7 +33,6 @@ const SignUp = () => {
     }else {
       setError("Validation Wrong");
     }
-    reset();
   }
   
   return (

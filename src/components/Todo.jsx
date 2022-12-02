@@ -8,7 +8,7 @@ import {
   ButtonGroup,
   IconButton,
 } from "@chakra-ui/react";
-import { forwardRef } from "react";
+import { memo } from "react";
 import {
   AiFillCheckCircle,
   AiOutlineCheckCircle,
@@ -61,4 +61,4 @@ const Todo = ({
   );
 };
 
-export default Todo;
+export default memo(Todo);

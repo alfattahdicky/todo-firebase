@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database";
+import { getDatabase, ref, update } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDyt4uV2z14qVwlJEyrdm94Ee8RztBDXYs",
@@ -18,4 +18,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-export {auth, database};
+const BASEURL = (userId) => `users/${userId}/todo`
+
+const todoRef = (path) => {
+  if(typeof path !== "string") return null;
+
+  return ref(database, path);
+};
+
+const updateDatabase = (path, data) => {
+  if(typeof data !== 'object') return null;
+  return update(todoRef(path), data)
+};
+
+export {auth, database, todoRef, updateDatabase, BASEURL};

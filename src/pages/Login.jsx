@@ -1,14 +1,16 @@
 import { Text, useToast } from '@chakra-ui/react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormLogin from '../components/FormLogin';
 import WrapForm from '../components/WrapForm';
 import {auth} from '../data/firebase';
 import useForm from '../hooks/useForm';
 
+const initialForm = {email: "", password: ""};
+
 const Login = () => {
-  const [state, setState] = useForm({email: "", password: ""})
+  const [state, setState] = useForm(initialForm)
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
@@ -47,4 +49,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default memo(Login);

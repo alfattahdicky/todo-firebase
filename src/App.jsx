@@ -12,7 +12,6 @@ import PrivateRoute from "./utils/PrivateRoute"
 function App() {
   const [currentUser, setCurrentUser] = useState("");
   const {pathname} = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const splitPathname = pathname.slice(1).length;
